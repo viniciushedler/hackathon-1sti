@@ -26,7 +26,7 @@ class LearningToSpell():
         ----------
         None
         """
-        self.word = word # Set the word
+        self.word = word.lower() # Set the word
         self.colors = [self.black] * len(word) # Set the colors
         self.current_letter = 0 # Set the current letter
         self.winner = False # Set the winner flag
@@ -48,7 +48,7 @@ class LearningToSpell():
             the color of the letter
         """
         # Check if the letter is correct
-        if letter == self.word[self.current_letter]:
+        if letter.lower() == self.word[self.current_letter]:
             # Set the color of the letter to green
             self.colors[self.current_letter] = self.green
             # Check if the letter is the last one
@@ -146,7 +146,7 @@ class LearningToSpell():
                 count_letters[letter] += 1
                 
         # Check if the word is correct
-        for i, letter in enumerate(word):
+        for i, letter in enumerate(word.lower()):
             # Check if the letter is in the correct position
             if letter == self.word[i]:
                 self.colors[i] = self.green # Set the color of the letter to green (correct position)
