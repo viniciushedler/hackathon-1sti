@@ -11,6 +11,7 @@ class LearningToSpell():
         self.current_letter = 0 # Current letter to be spelled
         self.colors = [] # Colors of the letters
         self.winner = False # Winner flag
+        self.fails = 0 # Number of fails
         
     def set_word(self, word):
         """
@@ -29,6 +30,7 @@ class LearningToSpell():
         self.colors = [self.black] * len(word) # Set the colors
         self.current_letter = 0 # Set the current letter
         self.winner = False # Set the winner flag
+        self.fails = 0 # Set the number of fails
 
     def check_letter(self, letter):
         """
@@ -59,7 +61,9 @@ class LearningToSpell():
                 self.word[self.current_letter], # Current letter
                 self.green # Color of the current letter
             )
+        # If the letter is incorrect
         else:
+            self.fails += 1 # Increment the number of fails
             # Set the color of the letter to red
             self.colors[self.current_letter] = self.red 
             return (
@@ -78,7 +82,7 @@ class LearningToSpell():
 
         Returns
         ----------
-        dict ('word': str, 'colors': list, 'current_letter': int, 'winner': bool)
+        dict ('word': str, 'colors': list, 'current_letter': int, 'fails': int, 'winner': bool)
             word: Word to be spelled
             colors: Colors of the letters
             current_letter: Current letter to be spelled
@@ -88,6 +92,7 @@ class LearningToSpell():
             'word': self.word, # Word to be spelled
             'colors': self.colors, # Colors of the letters
             'current_letter': self.current_letter, # Current letter to be spelled
+            'fails': self.fails, # Number of fails
             'winner': self.winner # Winner flag
         }
 
@@ -161,4 +166,9 @@ class LearningToSpell():
             # verified yet
             if letter in count_letters:
                 count_letters[letter] -= 1 # Decrement the number of letters of the word to be spelled
+
+        # Check if the player has failed
+        if not self.winner:
+            self.fails += 1 # Increment the number of fails
+
         return self.get_current_state() # Return the current state of the game
