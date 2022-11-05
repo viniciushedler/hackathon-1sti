@@ -2,7 +2,7 @@ import gradio as gr
 
 
 def img_to_letter(img):
-    return "a"
+    return img
 
 class MyInterface:
 
@@ -21,6 +21,28 @@ class MyInterface:
         print("---------------")
         print(f"self.word: {self.word}")
         print(html)
+        # a = """
+        # <div>AAAAAAAAAAAAAAAAAAAAAAAA</div>
+        # <div class='mydiv' style='background-color:green;'>
+        # <p>a</p>
+        # </div>
+        
+        # <div class='mydiv' style='background-color:blue;>
+        # <p>b</p>
+        # </div>
+        
+        # <div class='mydiv' style='background-color:grey;'>
+        # <p>c</p>
+        # </div>
+        
+        # <div class='mydiv' style='background-color:grey;>
+        # <p>d</p>
+        # </div>
+        
+        # <div class='mydiv' style='background-color:grey;>
+        # <p>e</p>
+        # </div>
+        # """
         return html
     
     def set_first_html(self):
@@ -88,13 +110,13 @@ class MyInterface:
         for i in range(len(self.word)):
             if i==len(self.word):
                 new_html += f"""
-                <div class='mydiv' style='background-color:{self.colors[i]}; clear:both;''>
+                <div class='mydiv' style='background-color:{self.colors[i]}; clear:both;'>
                 <p>{self.word[i]}</p>
                 </div>
                 """
             else:
                 new_html += f"""
-                <div class='mydiv' style='background-color:{self.colors[i]};>
+                <div class='mydiv' style='background-color:{self.colors[i]};'>
                 <p>{self.word[i]}</p>
                 </div>
                 """
