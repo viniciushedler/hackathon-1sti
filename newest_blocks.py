@@ -16,8 +16,12 @@ class MyInterface:
     
     def input_img(self, img):
         letter = img_to_letter(img)
-        self.__input_letter(letter)
-        return self.html
+        self.input_letter(letter)
+        html = self.html
+        print("---------------")
+        print(f"self.word: {self.word}")
+        print(html)
+        return html
     
     def set_first_html(self):
         new_html = f"""
@@ -45,12 +49,13 @@ class MyInterface:
                 <div class='mydiv' style='background-color:{self.colors[i]}; clear:both;'>
                 <p>{self.word[i]}</p>
                 </div>
-                """     
-            new_html += f"""
-            <div class='mydiv' style='background-color:{self.colors[i]};'>
-            <p>{self.word[i]}</p>
-            </div>
-            """
+                """
+            else:
+                new_html += f"""
+                <div class='mydiv' style='background-color:{self.colors[i]};'>
+                <p>{self.word[i]}</p>
+                </div>
+                """
         self.html = new_html
 
     def input_letter(self, letter):
@@ -68,7 +73,7 @@ class MyInterface:
             self.colors[self.current_letter_index] = 'red'
         new_html = f"""
         <style>
-            div {{
+            .mydiv {{
             float:left;
             display:flex;
             justify-content: center;
@@ -78,21 +83,21 @@ class MyInterface:
             height: 3em;
             margin: .5em;
             font-size: 40px;}}
-
         </style>
         """
         for i in range(len(self.word)):
-            if i==len(self.word)-1:
+            if i==len(self.word):
                 new_html += f"""
-                <div style='color:{self.colors[i]}; clear:both;''>
+                <div class='mydiv' style='background-color:{self.colors[i]}; clear:both;''>
                 <p>{self.word[i]}</p>
                 </div>
-                """     
-            new_html += f"""
-            <div style='color:{self.colors[i]};>
-            <p>{self.word[i]}</p>
-            </div>
-            """
+                """
+            else:
+                new_html += f"""
+                <div class='mydiv' style='background-color:{self.colors[i]};>
+                <p>{self.word[i]}</p>
+                </div>
+                """
         print(new_html)
         self.html = new_html
 
@@ -102,6 +107,6 @@ with gr.Blocks() as app:
     text = gr.Textbox(label="Palavra")
     button = gr.Button(value="Enviar")
 
-    button.click(fn=my_interface.input_letter, inputs=text, outputs=html)
+    button.click(fn=my_interface.input_img, inputs=text, outputs=html)
 
 app.launch()
