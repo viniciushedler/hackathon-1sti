@@ -8,7 +8,7 @@ class LearningToSpell():
 
         # Game variables
         self.word = '' # Word to be spelled
-        self.current_word  = '' # Word the player is spelling
+        self.current_word = '' # Word the player is spelling
         self.current_letter = 0 # Current letter to be spelled
         self.player_attempts = [[]] # The words guessed by the user
         self.max_attempts = 5 # Maximum attempts of the player
@@ -172,6 +172,14 @@ class LearningToSpell():
             'fails': self.fails, # Number of fails
             'winner': self.winner # Winner flag
         }
+
+    def try_letter(self, letter):
+        self.current_word += letter
+        if len(self.current_word) == len(self.word):
+            self.try_word(self.current_word)
+            self.player_attempts[self.current_attempt] = self.current_word
+            self.current_attempt += 1
+            self.current_word = ''
 
     def try_word(self, word):
         """
