@@ -57,17 +57,17 @@ def get_letter_from_image(image):
 
     result = detect_hands(image)
     v = result_to_vec(result)
-
     return num_to_let(model.predict(v.reshape((1,-1)))[0])
-    
+
 
 class MyInterface:
 
     def __init__(self):
+        self.max_attempts = 5
         self.word = "abcde"
+        self.player_words = [[ "" for _ in range(len(self.word)) ] for _ in range(self.max_attempts)]
         self.game = LearningToSpell()
         self.game.set_word(self.word)
-        self.colors = ["grey" if i>0 else "blue" for i in range(len(self.word))]
         self.images = ["" for _ in range(len(self.word))]
         self.current_letter_index = 0
         self.font_size = 40 # font size in px
@@ -78,7 +78,7 @@ class MyInterface:
             display:flex;
             justify-content: center;
             align-items: center;
-            background-color: gray;
+            background-color: grey;
             width: 3em;
             height: 3em;
             margin: .5em;
@@ -108,18 +108,20 @@ class MyInterface:
         new_html = self.basic_style
         len_word = len(self.word)
         # self.update_status()
-        for i in range(len_word):
-            new_html += f"""
-                <div class='mydiv' style='background-color:{self.game.colors[i]}; 
-                """
+        for i in range(self.max_attempts):
+            for j in range(len_word):
+                new_html += f"""
+                    <div class='mydiv' style='background-color:{self.game.colors[i][j]}; 
+                    """
 
-            if i==len_word:
-                new_html += f"""clear:both;"""
-                
-            new_html += f""" '>
-                <p>{self.game.word[i]}</p>
-                </div>
-                """
+                if j==0:
+                    new_html += f"""clear:both;"""
+                    
+                new_html += f""" '>
+                    <p></p>
+                    </div>
+                    """
+        
         self.html = new_html
 
     def input_letter(self, letter):
@@ -128,20 +130,13 @@ class MyInterface:
         If the letter was right, the html shows it and self.current_letter goes up by 1
         Else, the html shows the letter was wrond and self.current_letter stays the same        
         """
-        # if letter == self.word[self.current_letter_index]:
-        #     self.colors[self.current_letter_index] = 'green'
-        #     self.current_letter_index += 1
-        #     if self.current_letter_index<len(self.word):
-        #         self.colors[self.current_letter_index] = 'blue'
-        # else:
-        #     self.colors[self.current_letter_index] = 'red'
         new_html = self.basic_style
         self.game.try_word(letter)
         # self.update_status()
         len_word = len(self.word)
         for i in range(len_word):
             new_html += f"""
-                <div class='mydiv' style='background-color:{self.game.colors[i]}; 
+                <div class='mydiv' style='background-color:{self.game.colors[i][j]}; 
                 """
 
             if i==len_word:
@@ -151,21 +146,57 @@ class MyInterface:
                 <p>{letter[i]}</p>
                 </div>
                 """
-        # print(new_html)
         self.html = new_html
+    
+    def add_letter(self, letter):
+        new_html = self.basic_style
+        self.game.try_letter(letter)
+        len_word = len(self.word)
+        print(f"Colors: {self.game.colors}")
+        for i in range(self.max_attempts):
+            for j in range(len_word):
+                new_html += f"""
+                    <div class='mydiv' style='background-color:{self.game.colors[i][j]}; 
+                    """
+
+                if j==0:
+                    new_html += f"""clear:both;"""
+
+                if i==self.game.current_attempt:
+                    curr_word = self.game.current_word
+                else:
+                    curr_word = self.game.player_attempts[i]
+                len_curr_word = len(curr_word)
+
+                new_html += f""" '>
+                    <p>{curr_word[j] if j<len_curr_word else ''}</p>
+                    </div>
+                    """
+                    
+            # print(new_html)
+        self.html = new_html
+        return new_html
+    
+    def try_image(self, image):
+        letter = get_letter_from_image(image)
+        html = self.add_letter(letter)
+        return html
 
 with gr.Blocks() as app:
     my_interface = MyInterface()
     html = gr.HTML(value = my_interface.html)
     text = gr.Textbox(label="Palavra")
     with gr.Row():
-        webcam = gr.Image(source="webcam", streaming=True, mirror_webcam=True)
         hand = gr.Image()
+        webcam = gr.Image(source="webcam", streaming=True, mirror_webcam=True)
+        gr.Image() # remove this weh moving to production
 
-    button = gr.Button(value="Enviar")
+    add = gr.Button(value="Adcionar letra")
+    submit = gr.Button(value="Enviar palavra")
 
     #button.click(fn=my_interface.input_img, inputs=text, outputs=html)
     # button.click(fn=draw_landmarks, inputs=webcam, outputs=hand )
-    button.click(fn=get_letter_from_image, inputs=webcam, outputs=text)
+    # add.click(fn=my_interface.add_letter, inputs=webcam, outputs=html)
+    submit.click(fn=my_interface.try_image, inputs=webcam, outputs=html)
 
 app.launch()
