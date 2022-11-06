@@ -1,0 +1,5 @@
+gradio
+numpy
+mediapipe
+pickle
+sklearn

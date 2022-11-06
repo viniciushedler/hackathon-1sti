@@ -6,7 +6,7 @@ import pickle
 
 mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
-model = pickle.load(open("model.data", "rb"))
+model = pickle.load(open("back-end/model.data", "rb"))
 
 def detect_hands(image):
     """
