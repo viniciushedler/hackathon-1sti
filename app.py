@@ -6,7 +6,7 @@ import pickle
 
 mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
-model = pickle.load(open("legacy/model.data", "rb"))
+model = pickle.load(open("model.data", "rb"))
 
 def detect_hands(image):
     """
@@ -51,7 +51,6 @@ def get_letter_from_image(image):
 
     result = detect_hands(image)
     v = result_to_vec(result)
-
     return num_to_let(model.predict(v)[0])
     
 
@@ -63,25 +62,6 @@ class MyInterface:
         self.word = "abcde"
         self.game = LearningToSpell()
         self.game.set_word(self.word)
-        self.basic_style = """
-        <style>
-            .mydiv {
-            float: left;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: grey;
-            width: 3em;
-            height: 3em;
-            margin: .5em;
-            font-size: 40px;}
-
-            .blue {
-                background-color: gray;
-            }
-
-        </style>
-        """
         self.calculate_html()
         
 
@@ -165,7 +145,7 @@ class MyInterface:
 
                 # If it's the selected letter slot, give it a border
                 if j == self.game.current_letter and i == self.game.current_attempt:
-                    self.html += "border-style: solid; border-width: 5px; border-color: yellow;"
+                    self.html += "border-style: solid; border-width: 0.075em; border-color: yellow;"
 
                 # Adds the content of the div ('<p>letter</p>') and closes the div
                 self.html += f""" '>
@@ -218,7 +198,7 @@ css = """
     justify-content: center;
     align-items: center;
     background-color: gray;
-    font-size: 250%;
+    font-size: 350%;
     margin: 0.5% 0.5%;
     aspect-ratio: 1 / 1;
 }
@@ -249,7 +229,7 @@ with gr.Blocks(css=css) as demo:
         gr.Markdown("")
         left = gr.Button(value="Mover para a esquerda")
         with gr.Column():
-            add = gr.Button(value="Adcionar letra")
+            add = gr.Button(value="Adicionar letra")
             submit = gr.Button(value="Enviar palavra")
         right = gr.Button(value="Mover para a direita")
         gr.Markdown("")
