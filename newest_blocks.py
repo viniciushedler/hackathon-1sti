@@ -171,7 +171,6 @@ class MyInterface:
                     <div class='mydiv' style='background-color:{self.game.colors[i][j]}; 
                     """
 
-                # If it's the first letter, make it so it's also a new line
                 if j==0:
                     new_html += f"""clear:both;"""
 
@@ -181,12 +180,8 @@ class MyInterface:
                     </div>
                     """
                     
-        # 'debugging'
-        # print(new_html)
-
-        # Sets the html of the interface as the 'new_html' variable
+            # print(new_html)
         self.html = new_html
-
         return new_html
     
     def try_image(self, image):
@@ -232,24 +227,19 @@ css = """
 """
 
 with gr.Blocks() as app:
-    # Instanciates the MyInterface object, which will take care of the html output
     my_interface = MyInterface()
-
-    # Creates the gr.HTML element that will output most of the game interface
-    # (Doesn't output the webcam or button parts)
-    html = gr.HTML(value=my_interface.html)
+    html = gr.HTML(value = my_interface.html)
     text = gr.Textbox(label="Palavra")
     with gr.Row():
+        gr.Image() # todo: remove this line
         # Creates the webcam object, which will input images into the game
         # 'streaming = True' means that the webcam content is live streamed to the frontend
         #   so the user can see themselves
         # 'mirror_webcam = True' flips the image horizontally for a better experience
-        webcam = gr.Image(source="webcam", streaming=True, mirror_webcam=True)
-        hand = gr.Image()
-
-    button = gr.Button(value="Enviar")
-
-    # Create the buttons for the user to interact with the game
+        webcam = gr.Image(source = "webcam", streaming = True, mirror_webcam = True)
+        gr.Image() # todo: remove this line
+    
+    # Create the buttons for the user to 
     add = gr.Button(value="Adcionar letra")
     submit = gr.Button(value="Enviar palavra")
 
