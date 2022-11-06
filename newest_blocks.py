@@ -27,13 +27,8 @@ def result_to_vec(results):
     if results.multi_hand_landmarks == None:
         raise gr.Error("Não foi encontrada uma mão, tente novamente")
     # se há, cria o vetor
-    v = np.array([])
-    for lm in results.multi_hand_landmarks[0].landmark:
-        v = np.append(v, lm.x)
-        v = np.append(v, lm.y)
-        v = np.append(v, lm.z)
-    
-    return v
+    v = [(lm.x, lm.y, lm.z) for lm in results.multi_hand_landmarks[0].landmark]
+    return np.array(v).reshape(1, -1)
 
 
 def num_to_let(num):
@@ -57,8 +52,9 @@ def get_letter_from_image(image):
 
     result = detect_hands(image)
     v = result_to_vec(result)
-    return num_to_let(model.predict(v.reshape((1,-1)))[0])
 
+    return num_to_let(model.predict(v)[0])
+    
 
 class MyInterface:
 
@@ -66,37 +62,9 @@ class MyInterface:
 
         # Interface variables:
         self.word = "abcde"
-        self.basic_style = """
-        <style>
-            .mydiv {
-            float:left;
-            display:flex;
-            justify-content: center;
-            align-items: center;
-            background-color: grey;
-            width: 3em;
-            height: 3em;
-            margin: .5em;
-            font-size: 40px;}
-
-            .blue {
-                background-color: gray;
-            }
-
-        </style>
-        """
-
-        # Initial function calls
         self.game = LearningToSpell()
         self.game.set_word(self.word)
         self.set_first_html()
-    
-    # Deprecated?
-    # def update_status(self):
-    #     status = self.game.get_current_state()
-    #     self.word = status["word"]
-    #     self.colors = status["colors"]
-    #     self.current_letter_index = status["current_letter"]
 
     def input_img(self, img):
         """
@@ -129,8 +97,22 @@ class MyInterface:
         ----------
         None
         """
-        new_html = self.basic_style
         len_word = len(self.word)
+        # Subtracts the spaces between letters and gets
+        # the total space each one will occupy
+        margin = max(0, 40 - 4 * len_word)
+        square_size = (100 - len_word + 1) / len_word
+        new_html = f"""<style>
+        .mydiv {{
+            width: {square_size}%;
+        }}
+
+        .letters {{
+            margin: 0 {margin}%;
+        }}
+        </style>
+        <div class='letters'>
+        """
         # self.update_status()
         for i in range(self.game.max_attempts):
             for j in range(len_word):
@@ -138,41 +120,15 @@ class MyInterface:
                     <div class='mydiv' style='background-color:{self.game.colors[i][j]}; 
                     """
 
-                if j==0:
-                    new_html += f"""clear:both;"""
+                if j == len_word:
+                    new_html += f"clear: both;"
                     
                 new_html += f""" '>
                     <p></p>
                     </div>
                     """
-        
-        self.html = new_html
+        self.html = new_html + "</div>"
 
-    # Deprecated?
-    # def input_letter(self, letter):
-    #     """
-    #     Inputs a letter as the next letter and updates it's own html
-    #     If the letter was right, the html shows it and self.current_letter goes up by 1
-    #     Else, the html shows the letter was wrond and self.current_letter stays the same        
-    #     """
-    #     new_html = self.basic_style
-    #     self.game.try_word(letter)
-    #     # self.update_status()
-    #     len_word = len(self.word)
-    #     for i in range(len_word):
-    #         new_html += f"""
-    #             <div class='mydiv' style='background-color:{self.game.colors[i][j]}; 
-    #             """
-
-    #         if i==len_word:
-    #             new_html += f"""clear:both;"""
-
-    #         new_html += f""" '>
-    #             <p>{letter[i]}</p>
-    #             </div>
-    #             """
-    #     self.html = new_html
-    
     def add_letter(self, letter):
         """
         Adds a letter to the word currently being spelled by the user
@@ -251,34 +207,50 @@ class MyInterface:
 
         return html
 
+
+css = """
+.letters {
+    display: flex;
+}
+
+.mydiv {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: gray;
+    margin: 0 1%;
+    aspect-ratio: 1 / 1;
+}
+
+.blue {
+    background-color: gray;
+}
+
+#webcam {
+    aspect-ratio: 4 / 3;
+}
+"""
+
 with gr.Blocks() as app:
     # Instanciates the MyInterface object, which will take care of the html output
     my_interface = MyInterface()
 
     # Creates the gr.HTML element that will output most of the game interface
     # (Doesn't output the webcam or button parts)
-    html = gr.HTML(value = my_interface.html)
-    
-    # gr.Text element used to see elements as text when debugging
-    # text = gr.Textbox(label="Palavra")
-
-    # Creates a gr.Row, where the webcam is located
+    html = gr.HTML(value=my_interface.html)
+    text = gr.Textbox(label="Palavra")
     with gr.Row():
-        gr.Image() # todo: remove this line
         # Creates the webcam object, which will input images into the game
         # 'streaming = True' means that the webcam content is live streamed to the frontend
         #   so the user can see themselves
         # 'mirror_webcam = True' flips the image horizontally for a better experience
-        webcam = gr.Image(source = "webcam", streaming = True, mirror_webcam = True)
-        gr.Image() # todo: remove this line
-    
-    # Create the buttons for the user to 
+        webcam = gr.Image(source="webcam", streaming=True, mirror_webcam=True)
+        hand = gr.Image()
+
+    button = gr.Button(value="Enviar")
+
+    # Create the buttons for the user to interact with the game
     add = gr.Button(value="Adcionar letra")
     submit = gr.Button(value="Enviar palavra")
-
-    #button.click(fn=my_interface.input_img, inputs=text, outputs=html)
-    # button.click(fn=draw_landmarks, inputs=webcam, outputs=hand )
-    # add.click(fn=my_interface.add_letter, inputs=webcam, outputs=html)
-    submit.click(fn=my_interface.try_image, inputs=webcam, outputs=html)
 
 app.launch()

@@ -58,7 +58,7 @@ class LearningToSpell():
             # Set the color of the letter to green
             self.colors[self.current_attempt][self.current_letter] = self.green
             # Check if the letter is the last one
-            if self.current_letter < len(self.word) - 1: 
+            if self.current_letter < len(self.word) - 1:
                 self.current_letter += 1 # Set the next letter
             else:
                 self.winner = True # Set the winner flag
@@ -78,6 +78,76 @@ class LearningToSpell():
                 self.red # Color of the current letter
             )
 
+    def get_word(self):
+        """
+        Get the word to be spelled
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        ----------
+        str
+        """
+        return self.word
+
+    def get_colors(self):
+        """
+        Get the colors of the letters
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        ----------
+        list
+        """
+        return self.colors
+
+    def get_current_letter(self):
+        """
+        Get the current letter to be spelled
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        ----------
+        int
+        """
+        return self.current_letter
+
+    def get_fails(self):
+        """
+        Get the number of fails
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        ----------
+        int
+        """
+        return self.fails
+
+    def get_winner(self):
+        """
+        Get the winner flag
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        ----------
+        bool
+        """
+        return self.winner
+    
     def get_current_state(self):
         """
         Get the current state of the game
@@ -101,28 +171,6 @@ class LearningToSpell():
             'fails': self.fails, # Number of fails
             'winner': self.winner # Winner flag
         }
-
-    def get_winner(self):
-        """
-        Get the winner flag
-
-        Parameters
-        ----------
-        None
-
-        Returns
-        ----------
-        bool
-        """
-        return self.winner # Return the winner flag
-    
-    def try_letter(self, letter):
-        self.current_word += letter
-        if len(self.current_word) == len(self.word):
-            self.try_word(self.current_word)
-            self.player_attempts[self.current_attempt] = self.current_word
-            self.current_attempt += 1
-            self.current_word = ''
 
     def try_word(self, word):
         """
