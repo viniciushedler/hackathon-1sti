@@ -5,7 +5,7 @@ Libr.as é um jogo de adivinhação de palavras onde você digita fazendo sinais
 Acesse o jogo por [aqui](http://viniciushedler.github.io/hackathon-1sti) ou leia mais a respeito abaixo.
 
 *GRUPO:* ***KNN - K Nearest Nerds*** <br>
-***Membros:*** *Lf Laguardia, Bruno Fornaro, Vinicius Hedler, Marcelo Amaral*
+***Membros:*** *Lf Laguardia, Bruno Fornaro, Vinicius Hedler, Marcelo Amaral, Gianlucca Devigili*
 
 ## Problema: Difusão do Aprendizado de Libras
 
@@ -16,6 +16,11 @@ Embora não tenha sido estimado o número de pessoas fluentes (ou que consigam s
 ## Solução: Tornar o Aprendizado mais Interessante
 Tendo em vista o problema apresentado, desejamos instigar as pessoas a aprender LIBRAS, na esperança de aumentar o número de pessoas na população que saiba LIBRAS e consiga utilizar essa língua suficientemente para se expressar e conseguir comunicar outros fluentes por meio dela.
 
-Dessa forma, a base da nossa solução foi desenvolver uma forma _gamificada_ de aprender LIBRAS. Propomos esta solução com a intenção de aumentar o interesse dos usuários em aprender LIBRAS, mesmo que possa ser indiretamente. Isto é, com isso, o usuário pode estar apenas com a intenção de jogar em nossa aplicação (pois também nos preocupamos no aspecto de deixar o jogo atrativo), mas também irá aprender LIBRAS enquanto joga e se diverte.
+Dessa forma, a base da nossa solução foi desenvolver uma forma _gamificada_ de aprender LIBRAS. Propomos esta solução com a intenção de aumentar o interesse dos usuários em aprender LIBRAS, mesmo que possa ser indiretamente. Isto é, com isso, o usuário pode estar apenas com a intenção de jogar em nossa plataforma (pois também nos preocupamos no aspecto de deixar o jogo atrativo), mas também irá aprender LIBRAS enquanto joga e se diverte.
+
+Inicialmente, temos implementado um jogo no qual o usuário deve tentar adivinhar uma palavra submetendo tentativas de acertar a palavras (inteira), semelhante a como funciona o jogo [term.ooo](https://term.ooo/). No caso, para que o jogador consiga escrever as letras da palavra, ele deve fazer os sinais do alfabeto em LIBRAS para que a câmera do dispositivo que ele estiver utilizando capture a imagem dele fazendo o sinal (no qual será processado pela ferramenta que implementamos) e a letra seja reconhecida e escrita na tela.
 
 ## Descrição: Viabilidade de uso e aplicações
+Da maneira que propomos nossa ferramenta, conseguimos hospedá-la em um [site](https://viniciushedler.github.io/hackathon-1sti/) e, assim, fazemos com que ela seja acessível de forma simples, o usuário apenas precisa ter aceso a um computador que possua uma webcam e acesso à internet.
+
+Com isso, temos a possibilidade de atingir milhares de pessoas, e podemos ver como base alguns dos jogos que nos inspiraram como o [wordle](https://www.nytimes.com/games/wordle/index.html) e o [term.ooo](https://term.ooo/), que chegaram a receber [2 milhões](https://g1.globo.com/pop-arte/games/noticia/2022/01/19/wordle-e-termo-historia-de-amor-se-transformou-em-jogo-de-palavras-que-e-sensacao-em-2022.ghtml) de acessos diários e [400 mil](https://super.abril.com.br/tecnologia/termo-batemos-um-papo-com-o-criador-da-versao-em-portugues-do-jogo-wordle/) acessos diários, respectivamente.
