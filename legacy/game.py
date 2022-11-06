@@ -8,7 +8,7 @@ class LearningToSpell():
 
         # Game variables
         self.word = '' # Word to be spelled
-        self.current_word  = '' # Word the player is spelling
+        self.current_word = '' # Word the player is spelling
         self.current_letter = 0 # Current letter to be spelled
         self.player_attempts = [[]] # The words guessed by the user
         self.max_attempts = 5 # Maximum attempts of the player
@@ -30,11 +30,11 @@ class LearningToSpell():
         ----------
         None
         """
-        self.word = word.lower() # Set the word
-        self.current_word = "" # Sets the word the user is currently building
-        self.colors = [ [self.black] * len(word)] * self.max_attempts # Set the colors
+        self.word_len = len(word)
+        self.current_word = ['' for _ in range(self.word_len)] # Sets the word the user is currently building
+        self.colors = [ [ self.black for _ in range(self.word_len)] for _ in range(self.max_attempts) ] # Set the colors
         self.current_letter = 0 # Set the current letter
-        self.player_attempts = [ [''] * len(word)] * self.max_attempts # Set the attempts of the user
+        self.player_attempts = [ ['' for _ in range(self.word_len) ] for _ in range(self.max_attempts) ] # Set the attempts of the user
         self.winner = False # Set the winner flag
         self.fails = 0 # Set the number of fails
 
@@ -58,7 +58,7 @@ class LearningToSpell():
             # Set the color of the letter to green
             self.colors[self.current_attempt][self.current_letter] = self.green
             # Check if the letter is the last one
-            if self.current_letter < len(self.word) - 1: 
+            if self.current_letter < len(self.word) - 1:
                 self.current_letter += 1 # Set the next letter
             else:
                 self.winner = True # Set the winner flag
@@ -78,6 +78,76 @@ class LearningToSpell():
                 self.red # Color of the current letter
             )
 
+    def get_word(self):
+        """
+        Get the word to be spelled
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        ----------
+        str
+        """
+        return self.word
+
+    def get_colors(self):
+        """
+        Get the colors of the letters
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        ----------
+        list
+        """
+        return self.colors
+
+    def get_current_letter(self):
+        """
+        Get the current letter to be spelled
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        ----------
+        int
+        """
+        return self.current_letter
+
+    def get_fails(self):
+        """
+        Get the number of fails
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        ----------
+        int
+        """
+        return self.fails
+
+    def get_winner(self):
+        """
+        Get the winner flag
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        ----------
+        bool
+        """
+        return self.winner
+    
     def get_current_state(self):
         """
         Get the current state of the game
@@ -102,27 +172,18 @@ class LearningToSpell():
             'winner': self.winner # Winner flag
         }
 
-    def get_winner(self):
-        """
-        Get the winner flag
-
-        Parameters
-        ----------
-        None
-
-        Returns
-        ----------
-        bool
-        """
-        return self.winner # Return the winner flag
-    
     def try_letter(self, letter):
-        self.current_word += letter
-        if len(self.current_word) == len(self.word):
-            self.try_word(self.current_word)
-            self.player_attempts[self.current_attempt] = self.current_word
-            self.current_attempt += 1
-            self.current_word = ''
+        self.current_word[self.current_letter] = letter
+        self.current_letter += 1
+        if self.current_letter >= self.word_len:
+            self.current_letter = 0
+
+    def submit_word(self):
+        self.try_word(self.current_word)
+        self.player_attempts[self.current_attempt] = self.current_word
+        self.current_attempt += 1
+        self.current_word = ['' for _ in range(self.word_len)] # Sets the word the user is currently building
+        self.current_letter = 0
 
     def try_word(self, word):
         """
@@ -160,7 +221,8 @@ class LearningToSpell():
                 count_letters[letter] += 1
                 
         # Check if the word is correct
-        for i, letter in enumerate(word.lower()):
+        for i in range(self.word_len):
+            letter = word[i]
             # Check if the letter is in the correct position
             if letter == self.word[i]:
                 self.colors[self.current_attempt][i] = self.green # Set the color of the letter to green (correct position)
@@ -170,8 +232,7 @@ class LearningToSpell():
                 self.winner = False # Set the winner flag to False
                 # Check if the letter is in the word to be spelled and if that
                 # isn't verified yet
-                if letter in check_word \
-                    and count_letters[letter] > 0:
+                if letter in check_word and count_letters[letter] > 0:
                     self.colors[self.current_attempt][i] = self.black # Set the color of the letter to black (incorrect position, but in the word)
                 # If the letter isn't in the word to be spelled
                 else:
@@ -185,4 +246,11 @@ class LearningToSpell():
         if not self.winner:
             self.fails += 1 # Increment the number of fails
 
-        return self.get_current_state() # Return the current state of the game
+        # return self.get_current_state() # Return the current state of the game
+
+    def move_pointer(self, value):
+        self.current_letter += value
+        while self.current_letter >= self.word_len:
+            self.current_letter -= self.word_len
+        while self.current_letter < 0:
+            self.current_letter += self.word_len
