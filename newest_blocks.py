@@ -156,12 +156,12 @@ class MyInterface:
         square_size = (100 - len_word + 1) / len_word
         # Starts to redefine the HTML as the basic style of the interface
         self.html = f"""<style>
-        .mydiv {{
-            width: {square_size}%;
-        }}
-
         .letters {{
             margin: 0 {margin}%;
+        }}
+
+        .mydiv {{
+            width: {square_size}%;
         }}
         </style>
         <div class='letters'>
@@ -250,20 +250,19 @@ css = """
 }
 """
 
-with gr.Blocks() as app:
+with gr.Blocks() as demo:
     my_interface = MyInterface()
 
     # Creates the gr.HTML element that will output most of the game interface
     # (Doesn't output the webcam or button parts)
     html = gr.HTML(value=my_interface.html)
     with gr.Row():
-        gr.Image() # todo: remove this line
         # Creates the webcam object, which will input images into the game
         # 'streaming = True' means that the webcam content is live streamed to the frontend
         #   so the user can see themselves
         # 'mirror_webcam = True' flips the image horizontally for a better experience
         gr.Markdown("")
-        webcam = gr.Image(source="webcam", streaming=True, mirror_webcam=True)
+        webcam = gr.Image(source="webcam", streaming=True, mirror_webcam=True, elem_id="webcam")
         gr.Markdown("")
 
     # Create the buttons for the user to interact with the game
@@ -272,4 +271,4 @@ with gr.Blocks() as app:
     submit.click(fn=my_interface.try_image, inputs=webcam, outputs=html)
     add.click(fn=my_interface.add_letter, inputs=webcam, outputs=html)
 
-app.launch(server_port=8080)
+demo.launch(server_port=8080)

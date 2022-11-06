@@ -174,6 +174,7 @@ class LearningToSpell():
         }
 
     def try_letter(self, letter):
+        print("\n\n------------------------\nPalavra:", self.current_word, end="\n---------------------\n\n")
         self.current_word += letter
         if len(self.current_word) == len(self.word):
             self.try_word(self.current_word)
