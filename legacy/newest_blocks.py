@@ -188,15 +188,15 @@ class MyInterface:
         html: str
             A string formatted as html to be rendered by gr.HTML
         """
-        # Preparation
-        new_html = self.basic_style # Declares the 'new_html' variable as the basic style of the interface
-        len_word = len(self.word) # gets the len of the word to be guessed
-
-        # 'debugging'
-        print(f"Colors: {self.game.colors}")
-
         # Updates the game, inputting the letter
         self.game.try_letter(letter)
+        html = self.calculate_html()
+        return html
+
+    
+    def calculate_html(self):
+        new_html = self.basic_style # Declares the 'new_html' variable as the basic style of the interface
+        len_word = len(self.word) # gets the len of the word to be guessed
 
         # Builds the output html
         for i in range(self.game.max_attempts): # For every attempt the player may have
@@ -215,9 +215,13 @@ class MyInterface:
                     <div class='mydiv' style='background-color:{self.game.colors[i][j]}; 
                     """
 
+                # If it's the selected letter slot, give it a border
+                if j==self.game.current_letter and i==self.game.current_attempt:
+                    new_html += "border-style: solid; border-width:5px; border-color:yellow;"
+
                 # If it's the first letter, make it so it's also a new line
                 if j==0:
-                    new_html += f"""clear:both;"""
+                    new_html += "clear:both;"
 
                 # Adds the content of the div ('<p>letter</p>') and closes the div
                 new_html += f""" '>
@@ -232,7 +236,7 @@ class MyInterface:
         self.html = new_html
 
         return new_html
-    
+
     def try_image(self, image):
         """
         Receives an image, translates it to a letter and inputs it into the game
@@ -250,6 +254,25 @@ class MyInterface:
         html = self.add_letter(letter) # adds the letter to the game, getting back the output html
 
         return html
+    
+    def submit_word(self):
+        if len(self.game.current_word) == len(self.game.word):
+            self.game.submit_word()
+            html = self.calculate_html()
+        else:
+            raise gr.Error("Palavra inválida")
+        return html
+    
+    def move_left(self):
+        self.game.move_pointer(-1)
+        html = self.calculate_html()
+        return html
+    
+    def move_right(self):
+        self.game.move_pointer(1)
+        html = self.calculate_html()
+        return html
+
 
 with gr.Blocks() as app:
     # Instanciates the MyInterface object, which will take care of the html output
@@ -273,12 +296,18 @@ with gr.Blocks() as app:
         gr.Image() # todo: remove this line
     
     # Create the buttons for the user to 
-    add = gr.Button(value="Adcionar letra")
-    submit = gr.Button(value="Enviar palavra")
+    with gr.Row():
+        left = gr.Button(value="Mover para a esquerda")
+        with gr.Column():
+            add = gr.Button(value="Adcionar letra")
+            submit = gr.Button(value="Enviar palavra")
+        right = gr.Button(value="Mover para a direita")
 
     #button.click(fn=my_interface.input_img, inputs=text, outputs=html)
-    # button.click(fn=draw_landmarks, inputs=webcam, outputs=hand )
-    # add.click(fn=my_interface.add_letter, inputs=webcam, outputs=html)
-    submit.click(fn=my_interface.try_image, inputs=webcam, outputs=html)
+    # button.click(fn=draw_landmarks, inpu ts=webcam, outputs=hand )
+    add.click(fn=my_interface.try_image, inputs=webcam, outputs=html)
+    submit.click(fn=my_interface.submit_word, inputs=None, outputs=html)
+    left.click(fn=my_interface.move_left, inputs=None, outputs=html)
+    right.click(fn=my_interface.move_right, inputs=None, outputs=html)
 
 app.launch()
