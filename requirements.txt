@@ -1,5 +1,2 @@
-gradio
-numpy
-mediapipe
-pickle
-sklearn
+numpy==1.23.4
+mediapipe==0.8.11
