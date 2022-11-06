@@ -32,9 +32,10 @@ class LearningToSpell():
         """
         self.word = word.lower() # Set the word
         self.current_word = "" # Sets the word the user is currently building
-        self.colors = [ [self.black] * len(word)] * self.max_attempts # Set the colors
+        self.colors = [ [ self.black for _ in range(len(word))] for _ in range(self.max_attempts) ] # Set the colors
         self.current_letter = 0 # Set the current letter
         self.player_attempts = [ [''] * len(word)] * self.max_attempts # Set the attempts of the user
+        self.player_attempts = [ ['' for _ in range(len(word)) ] for _ in range(self.max_attempts) ] # Set the attempts of the user
         self.winner = False # Set the winner flag
         self.fails = 0 # Set the number of fails
 
