@@ -63,14 +63,9 @@ def get_letter_from_image(image):
 class MyInterface:
 
     def __init__(self):
-        self.max_attempts = 5
+
+        # Interface variables:
         self.word = "abcde"
-        self.player_words = [[ "" for _ in range(len(self.word)) ] for _ in range(self.max_attempts)]
-        self.game = LearningToSpell()
-        self.game.set_word(self.word)
-        self.images = ["" for _ in range(len(self.word))]
-        self.current_letter_index = 0
-        self.font_size = 40 # font size in px
         self.basic_style = """
         <style>
             .mydiv {
@@ -90,25 +85,54 @@ class MyInterface:
 
         </style>
         """
+
+        # Initial function calls
+        self.game = LearningToSpell()
+        self.game.set_word(self.word)
         self.set_first_html()
     
-    def update_status(self):
-        status = self.game.get_current_state()
-        self.word = status["word"]
-        self.colors = status["colors"]
-        self.current_letter_index = status["current_letter"]
+    # Deprecated?
+    # def update_status(self):
+    #     status = self.game.get_current_state()
+    #     self.word = status["word"]
+    #     self.colors = status["colors"]
+    #     self.current_letter_index = status["current_letter"]
 
     def input_img(self, img):
-        letter = get_letter_from_image(img)
-        self.input_letter(letter)
-        html = self.html
+        """
+        Receives an image, gets a letter from it and adds the letter to the game
+
+        Parameters
+        ----------
+        img : ???
+            Image inputed by the user
+        
+        Returns
+        ----------
+        html: str
+            A string formatted as html to be rendered by gr.HTML
+        """
+        letter = get_letter_from_image(img) # translates the image into a letter
+        self.input_letter(letter) # inputs the letter in the game, updating the interface html
+        html = self.html # gets the interface html
         return html
     
     def set_first_html(self):
+        """
+        Loads the html when starting the app
+
+        Parameters
+        ----------
+        None
+        
+        Returns
+        ----------
+        None
+        """
         new_html = self.basic_style
         len_word = len(self.word)
         # self.update_status()
-        for i in range(self.max_attempts):
+        for i in range(self.game.max_attempts):
             for j in range(len_word):
                 new_html += f"""
                     <div class='mydiv' style='background-color:{self.game.colors[i][j]}; 
@@ -124,73 +148,131 @@ class MyInterface:
         
         self.html = new_html
 
-    def input_letter(self, letter):
-        """
-        Inputs a letter as the next letter and updates it's own html
-        If the letter was right, the html shows it and self.current_letter goes up by 1
-        Else, the html shows the letter was wrond and self.current_letter stays the same        
-        """
-        new_html = self.basic_style
-        self.game.try_word(letter)
-        # self.update_status()
-        len_word = len(self.word)
-        for i in range(len_word):
-            new_html += f"""
-                <div class='mydiv' style='background-color:{self.game.colors[i][j]}; 
-                """
+    # Deprecated?
+    # def input_letter(self, letter):
+    #     """
+    #     Inputs a letter as the next letter and updates it's own html
+    #     If the letter was right, the html shows it and self.current_letter goes up by 1
+    #     Else, the html shows the letter was wrond and self.current_letter stays the same        
+    #     """
+    #     new_html = self.basic_style
+    #     self.game.try_word(letter)
+    #     # self.update_status()
+    #     len_word = len(self.word)
+    #     for i in range(len_word):
+    #         new_html += f"""
+    #             <div class='mydiv' style='background-color:{self.game.colors[i][j]}; 
+    #             """
 
-            if i==len_word:
-                new_html += f"""clear:both;"""
+    #         if i==len_word:
+    #             new_html += f"""clear:both;"""
 
-            new_html += f""" '>
-                <p>{letter[i]}</p>
-                </div>
-                """
-        self.html = new_html
+    #         new_html += f""" '>
+    #             <p>{letter[i]}</p>
+    #             </div>
+    #             """
+    #     self.html = new_html
     
     def add_letter(self, letter):
-        new_html = self.basic_style
-        self.game.try_letter(letter)
-        len_word = len(self.word)
+        """
+        Adds a letter to the word currently being spelled by the user
+        Once the word has enough letters, the word is sent to the game and checked
+
+        Parameters
+        ----------
+        letter : str
+            One single letter
+        
+        Returns
+        ----------
+        html: str
+            A string formatted as html to be rendered by gr.HTML
+        """
+        # Preparation
+        new_html = self.basic_style # Declares the 'new_html' variable as the basic style of the interface
+        len_word = len(self.word) # gets the len of the word to be guessed
+
+        # 'debugging'
         print(f"Colors: {self.game.colors}")
-        for i in range(self.max_attempts):
-            for j in range(len_word):
+
+        # Updates the game, inputting the letter
+        self.game.try_letter(letter)
+
+        # Builds the output html
+        for i in range(self.game.max_attempts): # For every attempt the player may have
+                                                # (can be thought of as 'for word in self.game.player_attempts')
+            
+            # Sets the current word, to be printed
+            if i==self.game.current_attempt:
+                curr_word = self.game.current_word
+            else:
+                curr_word = self.game.player_attempts[i]
+            len_curr_word = len(curr_word)
+
+            for j in range(len_word):   # Repeats for the size of the word to be guessed
+                # Creates the div with appropriate color
                 new_html += f"""
                     <div class='mydiv' style='background-color:{self.game.colors[i][j]}; 
                     """
 
+                # If it's the first letter, make it so it's also a new line
                 if j==0:
                     new_html += f"""clear:both;"""
 
-                if i==self.game.current_attempt:
-                    curr_word = self.game.current_word
-                else:
-                    curr_word = self.game.player_attempts[i]
-                len_curr_word = len(curr_word)
-
+                # Adds the content of the div ('<p>letter</p>') and closes the div
                 new_html += f""" '>
                     <p>{curr_word[j] if j<len_curr_word else ''}</p>
                     </div>
                     """
                     
-            # print(new_html)
+        # 'debugging'
+        # print(new_html)
+
+        # Sets the html of the interface as the 'new_html' variable
         self.html = new_html
+
         return new_html
     
     def try_image(self, image):
-        letter = get_letter_from_image(image)
-        html = self.add_letter(letter)
+        """
+        Receives an image, translates it to a letter and inputs it into the game
+
+        Parameters
+        ----------
+        image : ???
+            Image inputed by the user
+        
+        Returns
+        ----------
+        html : html to be rendered by a gr.HTML object
+        """
+        letter = get_letter_from_image(image) # gets a letter from the image
+        html = self.add_letter(letter) # adds the letter to the game, getting back the output html
+
         return html
 
 with gr.Blocks() as app:
+    # Instanciates the MyInterface object, which will take care of the html output
     my_interface = MyInterface()
-    html = gr.HTML(value = my_interface.html)
-    text = gr.Textbox(label="Palavra")
-    with gr.Row():
-        hand = gr.Image()
-        webcam = gr.Image(source="webcam", streaming=True, mirror_webcam=True)
-        gr.Image() # remove this weh moving to production
 
+    # Creates the gr.HTML element that will output most of the game interface
+    # (Doesn't output the webcam or button parts)
+    html = gr.HTML(value = my_interface.html)
+    
+    # gr.Text element used to see elements as text when debugging
+    # text = gr.Textbox(label="Palavra")
+
+    # Creates a gr.Row, where the webcam is located
+    with gr.Row():
+        gr.Image() # todo: remove this line
+        # Creates the webcam object, which will input images into the game
+        # 'streaming = True' means that the webcam content is live streamed to the frontend
+        #   so the user can see themselves
+        # 'mirror_webcam = True' flips the image horizontally for a better experience
+        webcam = gr.Image(source = "webcam", streaming = True, mirror_webcam = True)
+        gr.Image() # todo: remove this line
+    
+    # Create the buttons for the user to 
     add = gr.Button(value="Adcionar letra")
     submit = gr.Button(value="Enviar palavra")
 
