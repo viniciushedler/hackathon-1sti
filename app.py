@@ -107,7 +107,7 @@ class MyInterface:
         len_word = len(self.word) # gets the length of the word to be guessed
         # Subtracts the spaces between letters and gets
         # the total space each one will occupy
-        margin = max(0, 60 - 6 * len_word)
+        margin = max(0, 25 - 2.5 * len_word)
         square_size = (100 - len_word) / len_word
         # Starts to redefine the HTML as the basic style of the interface
         self.html = f"""<style>
@@ -136,7 +136,7 @@ class MyInterface:
             for j in range(len_word):   # Repeats for the size of the word to be guessed
                 # Creates the div with appropriate color
                 self.html += f"""
-                    <div class='mydiv' style='background-color:{self.game.colors[i][j]}; 
+                    <div class='mydiv' style='background-color:{self.game.colors[i][j]};
                     """
 
                 # If it's the first letter, make it so it's also a new line
@@ -203,6 +203,10 @@ css = """
     aspect-ratio: 1 / 1;
 }
 
+#square-grid {
+    align-self: center;
+}
+
 #webcam {
     aspect-ratio: 4 / 3;
 }
@@ -214,15 +218,13 @@ with gr.Blocks(css=css) as demo:
 
     # Creates the gr.HTML element that will output most of the game interface
     # (Doesn't output the webcam or button parts)
-    html = gr.HTML(value=my_interface.html)
     with gr.Row():
         # Creates the webcam object, which will input images into the game
         # 'streaming = True' means that the webcam content is live streamed to the frontend
         #   so the user can see themselves
         # 'mirror_webcam = True' flips the image horizontally for a better experience
-        gr.Markdown("")
+        html = gr.HTML(value=my_interface.html, elem_id="square-grid")
         webcam = gr.Image(source="webcam", streaming=True, mirror_webcam=True, elem_id="webcam")
-        gr.Markdown("")
 
     with gr.Row():
         # Creates empty fields for aesthetics and centering
