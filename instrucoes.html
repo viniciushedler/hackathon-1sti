@@ -49,13 +49,13 @@
         </div>
         <div class="w-full flex-grow lg:flex lg:items-center lg:w-auto hidden mt-2 lg:mt-0 bg-white lg:bg-transparent text-black p-4 lg:p-0 z-20" id="nav-content">
           <ul class="list-reset lg:flex justify-end flex-1 items-center">
-            <a class="inline-block py-2 px-4 text-black font-bold no-underline" href="instrucoes.html">Instruções</a>
+            <a class="inline-block py-2 px-4 text-black font-bold no-underline" href="index.html">Home</a>
           <a
             id="navAction"
             class="mx-auto lg:mx-0 hover:underline bg-gray-100 text-gray-800 font-bold rounded-full mt-4 lg:mt-0 py-4 px-8 shadow opacity-75 focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out"
-            href="index.html"
+            href="game.html"
           >
-            Home
+            Jogar
           </a>
         </div>
       </div>
@@ -64,9 +64,22 @@
 
     <!--Body-->
     <body>
-        <!--Coloque o app do Gradio bem aqui-->
-        <div style="margin:100px"></div>
-        <gradio-app space="BrunoFornaro/libr.as"></gradio-app>
+        <div style="margin: 100px;">
+          <h2 class="w-full my-2 text-5xl font-bold leading-tight text-center text-gray-800">
+            Instruções
+          </h2>
+        <div class="text-center">
+          <p class="text-lg text-gray-800">
+            O jogo consiste em adivinhar a palavra que está sendo representada pelas letras que aparecem na tela.
+            Para isso, você deve fazer o sinal da letra que acha que compõe a palavra.
+            <br>
+            <br>
+            Visando melhorar a acurácia do modelo, nem todos os sinais estão disponíveis. Segue abaixo uma lista das
+            letras que estão disponíveis e seus respectivos sinais em Libras:
+          </p>
+          <img src="images/alfabeto.png" alt="Logo" class="w-1/2 mx-auto">
+        </div></div>
+        <div style="margin: 300px;"></div>
 
     </body>
 
