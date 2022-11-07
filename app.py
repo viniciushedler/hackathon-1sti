@@ -3,6 +3,7 @@ from game import *
 import numpy as np
 import mediapipe as mp
 import pickle
+import secrets
 
 mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
@@ -52,14 +53,21 @@ def get_letter_from_image(image):
     result = detect_hands(image)
     v = result_to_vec(result)
     return num_to_let(model.predict(v)[0])
-    
+
+def get_random_word():
+    word_f_address = "word_filtering/new_valid_words.txt"
+    with open(word_f_address, 'r') as f:
+        word = secrets.choice(f.readlines())
+        word = word[:-1]
+    return word
 
 class MyInterface:
 
     def __init__(self):
 
         # Interface variables:
-        self.word = "abcde"
+        self.word = get_random_word()
+        print(self.word)
         self.game = LearningToSpell()
         self.game.set_word(self.word)
         self.calculate_html()
@@ -173,7 +181,11 @@ class MyInterface:
         return self.html
 
     def submit_word(self):
-        if len(self.game.current_word) == len(self.game.word):
+        full = True
+        for letter in self.game.current_word:
+            if letter=='':
+                full = False
+        if full:
             self.game.submit_word()
             self.calculate_html()
         else:
@@ -212,6 +224,10 @@ css = """
 }
 """
 
+try:
+    gr.close_all()
+except:
+    pass
 
 with gr.Blocks(css=css) as demo:
     my_interface = MyInterface()

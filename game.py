@@ -30,6 +30,7 @@ class LearningToSpell():
         ----------
         None
         """
+        self.word = word
         self.word_len = len(word)
         self.current_word = ['' for _ in range(self.word_len)] # Sets the word the user is currently building
         self.colors = [ [ self.black for _ in range(self.word_len)] for _ in range(self.max_attempts) ] # Set the colors
