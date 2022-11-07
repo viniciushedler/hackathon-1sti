@@ -67,7 +67,6 @@ class MyInterface:
 
         # Interface variables:
         self.word = get_random_word()
-        print(self.word)
         self.game = LearningToSpell()
         self.game.set_word(self.word)
         self.calculate_html()
@@ -77,7 +76,7 @@ class MyInterface:
         self.game = LearningToSpell()
         self.game.set_word(self.word)
         self.calculate_html()
-        return (self.html, self.word)
+        return self.html
 
     def input_img(self, img):
         """
@@ -248,12 +247,11 @@ try:
 except:
     pass
 
-with gr.Blocks(css=css) as demo:
+with gr.Blocks(css=css) as demo:    
     my_interface = MyInterface()
 
     # Creates the gr.HTML element that will output most of the game interface
     # (Doesn't output the webcam or button parts)
-    answer = gr.HTML(my_interface.word)
     with gr.Row():
         # Creates the webcam object, which will input images into the game
         # 'streaming = True' means that the webcam content is live streamed to the frontend
@@ -268,8 +266,8 @@ with gr.Blocks(css=css) as demo:
         # Creates empty fields for aesthetics and centering
         gr.Markdown("")
         left = gr.Button(value="Mover para a esquerda")
-        add = gr.Button(value="Adicionar letra")
         submit = gr.Button(value="Enviar palavra")
+        add = gr.Button(value="Adicionar letra")
         reset = gr.Button("Reiniciar jogo")
         right = gr.Button(value="Mover para a direita")
         gr.Markdown("")
@@ -278,6 +276,6 @@ with gr.Blocks(css=css) as demo:
     submit.click(fn=my_interface.submit_word, inputs=None, outputs=[html, message])
     left.click(fn=my_interface.move_left, inputs=None, outputs=html)
     right.click(fn=my_interface.move_right, inputs=None, outputs=html)
-    reset.click(fn=my_interface.reset, inputs=None, outputs=[html, answer])
+    reset.click(fn=my_interface.reset, inputs=None, outputs=html)
 
 demo.launch()
