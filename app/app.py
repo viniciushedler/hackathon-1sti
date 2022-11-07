@@ -210,9 +210,12 @@ class MyInterface:
 
     def check_win(self):
         if self.game.winner:
-            return "<div class='message'>Parabéns, você ganhou!!!</div>"
+            return "<div class='message'>✨ Parabéns, você ganhou ✨</div>"
         else:
             return "<div class='message'>Bom jogo</div>"
+        
+    def get_word(self):
+        return self.word
 
 css = """
 .mydiv {
@@ -279,5 +282,6 @@ with gr.Blocks(css=css) as demo:
     left.click(fn=my_interface.move_left, inputs=None, outputs=html)
     right.click(fn=my_interface.move_right, inputs=None, outputs=html)
     reset.click(fn=my_interface.reset, inputs=None, outputs=html)
+    reset.click(fn=my_interface.get_word, inputs=None, outputs=answer)
 
 demo.launch()
