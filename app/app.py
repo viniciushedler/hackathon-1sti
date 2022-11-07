@@ -67,7 +67,6 @@ class MyInterface:
 
         # Interface variables:
         self.word = get_random_word()
-        print(self.word)
         self.game = LearningToSpell()
         self.game.set_word(self.word)
         self.calculate_html()
@@ -182,7 +181,7 @@ class MyInterface:
         ----------
         html : html to be rendered by a gr.HTML object
         """
-        letter = get_letter_from_image(image) # gets a letter from the image
+        letter = get_letter_from_image(np.flip(image, axis=1)) # gets a letter from the image
         self.add_letter(letter) # adds the letter to the game, getting back the output html
         return self.html
 
@@ -196,7 +195,8 @@ class MyInterface:
             self.calculate_html()
         else:
             raise gr.Error("Palavra inválida.")
-        return self.html
+        message = self.check_win()
+        return (self.html, message)
     
     def move_left(self):
         self.game.move_pointer(-1)
@@ -210,7 +210,7 @@ class MyInterface:
 
     def check_win(self):
         if self.game.winner:
-            return "<div class='message'>Parabéns, você ganhou!!!</div>"
+            return "<div class='message'>✨ Parabéns, você ganhou ✨</div>"
         else:
             return "<div class='message'>Bom jogo</div>"
 
@@ -247,12 +247,11 @@ try:
 except:
     pass
 
-with gr.Blocks(css=css) as demo:
+with gr.Blocks(css=css) as demo:    
     my_interface = MyInterface()
 
     # Creates the gr.HTML element that will output most of the game interface
     # (Doesn't output the webcam or button parts)
-    answer = gr.HTML(my_interface.word)
     with gr.Row():
         # Creates the webcam object, which will input images into the game
         # 'streaming = True' means that the webcam content is live streamed to the frontend
@@ -267,15 +266,14 @@ with gr.Blocks(css=css) as demo:
         # Creates empty fields for aesthetics and centering
         gr.Markdown("")
         left = gr.Button(value="Mover para a esquerda")
-        add = gr.Button(value="Adicionar letra")
         submit = gr.Button(value="Enviar palavra")
+        add = gr.Button(value="Adicionar letra")
         reset = gr.Button("Reiniciar jogo")
         right = gr.Button(value="Mover para a direita")
         gr.Markdown("")
 
     add.click(fn=my_interface.try_image, inputs=webcam, outputs=html)
-    submit.click(fn=my_interface.submit_word, inputs=None, outputs=html)
-    submit.click(fn=my_interface.check_win, inputs=None, outputs=message)
+    submit.click(fn=my_interface.submit_word, inputs=None, outputs=[html, message])
     left.click(fn=my_interface.move_left, inputs=None, outputs=html)
     right.click(fn=my_interface.move_right, inputs=None, outputs=html)
     reset.click(fn=my_interface.reset, inputs=None, outputs=html)
