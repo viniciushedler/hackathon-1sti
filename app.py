@@ -190,6 +190,9 @@ class MyInterface:
             self.calculate_html()
         else:
             raise gr.Error("Palavra inválida.")
+        print(f'Winner: {self.game.winner}')
+        if self.game.winner:
+            gr.Error("VOCÊ VENCEU!!!")
         return self.html
     
     def move_left(self):
@@ -234,6 +237,7 @@ with gr.Blocks(css=css) as demo:
 
     # Creates the gr.HTML element that will output most of the game interface
     # (Doesn't output the webcam or button parts)
+    answer = gr.HTML(my_interface.word)
     with gr.Row():
         # Creates the webcam object, which will input images into the game
         # 'streaming = True' means that the webcam content is live streamed to the frontend
@@ -257,5 +261,5 @@ with gr.Blocks(css=css) as demo:
     left.click(fn=my_interface.move_left, inputs=None, outputs=html)
     right.click(fn=my_interface.move_right, inputs=None, outputs=html)
 
-demo.launch(server_port=8080)
+demo.launch()
   
