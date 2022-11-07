@@ -77,7 +77,7 @@ class MyInterface:
         self.game = LearningToSpell()
         self.game.set_word(self.word)
         self.calculate_html()
-        return self.html
+        return (self.html, self.word)
 
     def input_img(self, img):
         """
@@ -196,7 +196,8 @@ class MyInterface:
             self.calculate_html()
         else:
             raise gr.Error("Palavra inválida.")
-        return self.html
+        message = self.check_win()
+        return (self.html, message)
     
     def move_left(self):
         self.game.move_pointer(-1)
@@ -213,9 +214,6 @@ class MyInterface:
             return "<div class='message'>✨ Parabéns, você ganhou ✨</div>"
         else:
             return "<div class='message'>Bom jogo</div>"
-        
-    def get_word(self):
-        return self.word
 
 css = """
 .mydiv {
@@ -277,11 +275,9 @@ with gr.Blocks(css=css) as demo:
         gr.Markdown("")
 
     add.click(fn=my_interface.try_image, inputs=webcam, outputs=html)
-    submit.click(fn=my_interface.submit_word, inputs=None, outputs=html)
-    submit.click(fn=my_interface.check_win, inputs=None, outputs=message)
+    submit.click(fn=my_interface.submit_word, inputs=None, outputs=[html, message])
     left.click(fn=my_interface.move_left, inputs=None, outputs=html)
     right.click(fn=my_interface.move_right, inputs=None, outputs=html)
-    reset.click(fn=my_interface.reset, inputs=None, outputs=html)
-    reset.click(fn=my_interface.get_word, inputs=None, outputs=answer)
+    reset.click(fn=my_interface.reset, inputs=None, outputs=[html, answer])
 
 demo.launch()
