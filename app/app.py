@@ -182,7 +182,7 @@ class MyInterface:
         ----------
         html : html to be rendered by a gr.HTML object
         """
-        letter = get_letter_from_image(image) # gets a letter from the image
+        letter = get_letter_from_image(np.flip(image, axis=1)) # gets a letter from the image
         self.add_letter(letter) # adds the letter to the game, getting back the output html
         return self.html
 
