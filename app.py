@@ -208,6 +208,11 @@ class MyInterface:
         self.calculate_html()
         return self.html
 
+    def check_win(self):
+        if self.game.winner:
+            return "<div class='message'>Parabéns, você ganhou!!!</div>"
+        else:
+            return "<div class='message'>Bom jogo</div>"
 
 css = """
 .mydiv {
@@ -219,6 +224,13 @@ css = """
     font-size: 350%;
     margin: 0.5% 0.5%;
     aspect-ratio: 1 / 1;
+}
+
+.message {
+    margin: 5% 5%;
+    text-align: center;
+    font-size: 350%;
+    font-weight: 900;
 }
 
 #square-grid {
@@ -250,6 +262,8 @@ with gr.Blocks(css=css) as demo:
         webcam = gr.Image(source="webcam", streaming=True, mirror_webcam=True, elem_id="webcam")
 
     with gr.Row():
+        message = gr.HTML("<div class='message'>Bom jogo</div>")
+    with gr.Row():
         # Creates empty fields for aesthetics and centering
         gr.Markdown("")
         left = gr.Button(value="Mover para a esquerda")
@@ -261,6 +275,7 @@ with gr.Blocks(css=css) as demo:
 
     add.click(fn=my_interface.try_image, inputs=webcam, outputs=html)
     submit.click(fn=my_interface.submit_word, inputs=None, outputs=html)
+    submit.click(fn=my_interface.check_win, inputs=None, outputs=message)
     left.click(fn=my_interface.move_left, inputs=None, outputs=html)
     right.click(fn=my_interface.move_right, inputs=None, outputs=html)
     reset.click(fn=my_interface.reset, inputs=None, outputs=html)
