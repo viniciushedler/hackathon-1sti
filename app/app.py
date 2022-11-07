@@ -7,7 +7,7 @@ import secrets
 
 mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
-model = pickle.load(open("back-end/model.data", "rb"))
+model = pickle.load(open("model.data", "rb"))
 
 def detect_hands(image):
     """
@@ -55,7 +55,7 @@ def get_letter_from_image(image):
     return num_to_let(model.predict(v)[0])
 
 def get_random_word():
-    word_f_address = "word_filtering/new_valid_words.txt"
+    word_f_address = "new_valid_words.txt"
     with open(word_f_address, 'r') as f:
         word = secrets.choice(f.readlines())
         word = word[:-1]
@@ -71,7 +71,13 @@ class MyInterface:
         self.game = LearningToSpell()
         self.game.set_word(self.word)
         self.calculate_html()
-        
+
+    def reset(self):
+        self.word = get_random_word()
+        self.game = LearningToSpell()
+        self.game.set_word(self.word)
+        self.calculate_html()
+        return self.html
 
     def input_img(self, img):
         """
@@ -202,6 +208,11 @@ class MyInterface:
         self.calculate_html()
         return self.html
 
+    def check_win(self):
+        if self.game.winner:
+            return "<div class='message'>Parabéns, você ganhou!!!</div>"
+        else:
+            return "<div class='message'>Bom jogo</div>"
 
 css = """
 .mydiv {
@@ -213,6 +224,13 @@ css = """
     font-size: 350%;
     margin: 0.5% 0.5%;
     aspect-ratio: 1 / 1;
+}
+
+.message {
+    margin: 5% 5%;
+    text-align: center;
+    font-size: 350%;
+    font-weight: 900;
 }
 
 #square-grid {
@@ -244,19 +262,22 @@ with gr.Blocks(css=css) as demo:
         webcam = gr.Image(source="webcam", streaming=True, mirror_webcam=True, elem_id="webcam")
 
     with gr.Row():
+        message = gr.HTML("<div class='message'>Bom jogo</div>")
+    with gr.Row():
         # Creates empty fields for aesthetics and centering
         gr.Markdown("")
         left = gr.Button(value="Mover para a esquerda")
-        with gr.Column():
-            add = gr.Button(value="Adicionar letra")
-            submit = gr.Button(value="Enviar palavra")
+        add = gr.Button(value="Adicionar letra")
+        submit = gr.Button(value="Enviar palavra")
+        reset = gr.Button("Reiniciar jogo")
         right = gr.Button(value="Mover para a direita")
         gr.Markdown("")
 
     add.click(fn=my_interface.try_image, inputs=webcam, outputs=html)
     submit.click(fn=my_interface.submit_word, inputs=None, outputs=html)
+    submit.click(fn=my_interface.check_win, inputs=None, outputs=message)
     left.click(fn=my_interface.move_left, inputs=None, outputs=html)
     right.click(fn=my_interface.move_right, inputs=None, outputs=html)
+    reset.click(fn=my_interface.reset, inputs=None, outputs=html)
 
 demo.launch()
-  
