@@ -190,9 +190,6 @@ class MyInterface:
             self.calculate_html()
         else:
             raise gr.Error("Palavra inválida.")
-        print(f'Winner: {self.game.winner}')
-        if self.game.winner:
-            gr.Error("VOCÊ VENCEU!!!")
         return self.html
     
     def move_left(self):
