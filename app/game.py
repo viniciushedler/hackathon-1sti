@@ -2,7 +2,7 @@
 class LearningToSpell():
     def __init__(self):
         # Colors
-        self.black = "#000000"
+        self.black = "#dbdbdb"
         self.yellow = "#ffb030"
         self.green = "#40ff86"
         self.red = "#ff4040"
