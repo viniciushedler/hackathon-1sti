@@ -158,7 +158,7 @@ class MyInterface:
 
                 # If it's the selected letter slot, give it a border
                 if j == self.game.current_letter and i == self.game.current_attempt:
-                    self.html += "border-style: solid; border-width: 0.075em; border-color: yellow;"
+                    self.html += "border-style: solid; border-width: 0.075em; border-color: #222222;"
 
                 # Adds the content of the div ('<p>letter</p>') and closes the div
                 self.html += f""" '>
@@ -224,6 +224,8 @@ css = """
     font-size: 350%;
     margin: 0.5% 0.5%;
     aspect-ratio: 1 / 1;
+    border-radius: 10px;
+    color: #222222;
 }
 
 .message {
