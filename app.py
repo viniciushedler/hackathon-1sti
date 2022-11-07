@@ -71,7 +71,13 @@ class MyInterface:
         self.game = LearningToSpell()
         self.game.set_word(self.word)
         self.calculate_html()
-        
+
+    def reset(self):
+        self.word = get_random_word()
+        self.game = LearningToSpell()
+        self.game.set_word(self.word)
+        self.calculate_html()
+        return self.html
 
     def input_img(self, img):
         """
@@ -247,9 +253,9 @@ with gr.Blocks(css=css) as demo:
         # Creates empty fields for aesthetics and centering
         gr.Markdown("")
         left = gr.Button(value="Mover para a esquerda")
-        with gr.Column():
-            add = gr.Button(value="Adicionar letra")
-            submit = gr.Button(value="Enviar palavra")
+        add = gr.Button(value="Adicionar letra")
+        submit = gr.Button(value="Enviar palavra")
+        reset = gr.Button("Reiniciar jogo")
         right = gr.Button(value="Mover para a direita")
         gr.Markdown("")
 
@@ -257,6 +263,6 @@ with gr.Blocks(css=css) as demo:
     submit.click(fn=my_interface.submit_word, inputs=None, outputs=html)
     left.click(fn=my_interface.move_left, inputs=None, outputs=html)
     right.click(fn=my_interface.move_right, inputs=None, outputs=html)
+    reset.click(fn=my_interface.reset, inputs=None, outputs=html)
 
 demo.launch()
-  
