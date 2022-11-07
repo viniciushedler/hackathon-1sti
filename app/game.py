@@ -3,8 +3,9 @@ class LearningToSpell():
     def __init__(self):
         # Colors
         self.black = "#000000"
-        self.green = "#00ff00"
-        self.red = "#ff0000"
+        self.yellow = "#ffb030"
+        self.green = "#40ff86"
+        self.red = "#ff4040"
 
         # Game variables
         self.word = '' # Word to be spelled
@@ -234,7 +235,7 @@ class LearningToSpell():
                 # Check if the letter is in the word to be spelled and if that
                 # isn't verified yet
                 if letter in check_word and count_letters[letter] > 0:
-                    self.colors[self.current_attempt][i] = self.black # Set the color of the letter to black (incorrect position, but in the word)
+                    self.colors[self.current_attempt][i] = self.yellow # Set the color of the letter to black (incorrect position, but in the word)
                 # If the letter isn't in the word to be spelled
                 else:
                     self.colors[self.current_attempt][i] = self.red # Set the color of the letter to red (not in the word)

@@ -55,7 +55,7 @@ def get_letter_from_image(image):
     return num_to_let(model.predict(v)[0])
 
 def get_random_word():
-    word_f_address = "word_filtering/new_valid_words.txt"
+    word_f_address = "new_valid_words.txt"
     with open(word_f_address, 'r') as f:
         word = secrets.choice(f.readlines())
         word = word[:-1]
